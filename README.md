@@ -13,7 +13,6 @@ Repository collecting configuration.nix files for various PCs
 
 In alphabetical order, with a short description for context:
 
-* `prometheus` main laptop, general purpose usage.
 * `calamaro` Thinkpad x61 used as a media center (old machine soon to be
   decommissioned)
-  
+* `prometheus` main laptop, general purpose usage.
