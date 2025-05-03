@@ -125,7 +125,9 @@
   zramSwap.enable = true;
   zramSwap.memoryPercent = 25;
 
-  # Add a swapfile
+  # Add a swapfile and use it for hybernation/resume
+  # see:https://discourse.nixos.org/t/is-it-possible-to-hibernate-with-swap-file/2852/5
+  boot.initrd.systemd.enable = true;
   swapDevices = [ {
     device = "/var/lib/swapfile";
     size = 32*1024;
@@ -218,7 +220,7 @@
       onCalendar = "hourly";
       settings = {
         snapshot_preserve_min = "1d";
-        snapshot_preserve = "1d 1w 1m";
+        snapshot_preserve = "1d 2w 3m";
         volume."/home" = {
             snapshot_dir = "/home/snapshots";
             subvolume = ".";
@@ -268,6 +270,11 @@
     script = ''
       flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     '';
+  };
+  # To use Flatpaks you must enable XDG Desktop Portals
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
   # Open ports in the firewall.
