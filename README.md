@@ -15,4 +15,5 @@ In alphabetical order, with a short description for context:
 
 * `calamaro` Thinkpad x61 used as a media center (old machine soon to be
   decommissioned)
+* `pol-lab` Electronics lab pc
 * `prometheus` main laptop, general purpose usage.
