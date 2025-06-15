@@ -4,6 +4,9 @@
 
 { config, pkgs, ... }:
 
+let
+  waveformsFlake = builtins.getFlake "github:liff/waveforms-flake";
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -138,11 +141,14 @@
     size = 32*1024;
   } ];
 
+  # For diglent Waveforms to work without sudo
+  users.groups.plugdev = { };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.pol = {
     isNormalUser = true;
     description = "Pol";
-    extraGroups = [ "networkmanager" "wheel" "syncthing" ];
+    extraGroups = [ "networkmanager" "wheel" "syncthing" "plugdev" ];
     packages = with pkgs; [
        flatpak
        syncthing
@@ -199,6 +205,13 @@
     tela-icon-theme
     vimix-icon-theme
     numix-cursor-theme
+
+    # See flake on top of this configuration
+    waveformsFlake.packages.${pkgs.system}.waveforms
+  ];
+
+  services.udev.packages = with pkgs; [
+    waveformsFlake.packages.${pkgs.system}.adept2-runtime
   ];
 
   # Inspired from https://discourse.nixos.org/t/declare-firefox-extensions-and-settings/36265?page=2
@@ -233,6 +246,9 @@
       };
     };
   };
+
+  # Enable flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # https://nixos.wiki/wiki/Storage_optimization
   nix.settings.auto-optimise-store = true;
