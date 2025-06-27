@@ -81,6 +81,17 @@ in
   services.xserver.desktopManager.lxqt.enable = true;
   programs.xfconf.enable = true;
 
+  # Make xscreensaver work correctly (see: https://github.com/NixOS/nixpkgs/issues/402969)
+  services.xscreensaver.enable = true;
+  security.pam.services.xscreensaver.enable = true;
+
+  # Use physlock for screen locking
+  services.physlock = {
+    enable = true;
+    allowAnyUser = true;
+    lockMessage = "System status: Prometheus in chains (Lock active).";
+  };
+
   # Enable bluetooth
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
