@@ -5,7 +5,9 @@
 { config, pkgs, ... }:
 
 let
-  waveformsFlake = builtins.getFlake "github:liff/waveforms-flake";
+  # See also: https://github.com/liff/waveforms-flake/forks?sort_by=last_updated
+  #waveformsFlake = builtins.getFlake "github:liff/waveforms-flake";
+  waveformsFlake = builtins.getFlake "github:amrsoll/waveforms-flake";
 in
 {
   imports =
@@ -159,7 +161,7 @@ in
   users.users.pol = {
     isNormalUser = true;
     description = "Pol";
-    extraGroups = [ "networkmanager" "wheel" "syncthing" "plugdev" ];
+    extraGroups = [ "networkmanager" "wheel" "syncthing" "plugdev" "dialout" ];
     packages = with pkgs; [
        flatpak
        syncthing
