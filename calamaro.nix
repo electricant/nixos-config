@@ -12,7 +12,7 @@
     ];
 
   # Add kernel modules to the second stageog the boot (after initrd)
-  boot.kernelModules = [ "thinkpad_acpi" ];
+  #boot.kernelModules = [ "thinkpad_acpi" ];
 
   # Bootloader.
   boot.loader.grub.enable = true;
@@ -32,7 +32,7 @@
 
   # Sysctl tweaks
   boot.kernel.sysctl = {
-    "vm.swappiness" = 120;
+    "vm.swappiness" = 80;
     "vm.watermark_boost_factor" = 0;
     "vm.watermark_scale_factor" = 125;
     "vm.page-cluster" = 0;
@@ -124,53 +124,34 @@
     # no need to redefine it in your config for now)
     #media-session.enable = true;
 
-    # Better audio quality (probably not noticeable)
     extraConfig.pipewire = {
-      "99-no-resample" = {
+      # Better audio quality (probably not noticeable)
+      "no-resample" = {
         context.properties = {
           default.clock.rate = 48000;
           default.clock.allowed-rates = [ 44100 48000 88200 96000 ];
-	  default.clock.quantum = 64;
+          default.clock.quantum = 64;
 	  default.clock.min-quantum = 64;
           default.clock.max-quantum = 512;
 	  resample.quality = 5;
-	};
+        };
       };
+      # Force pro audio (fixes weird volume issues)
+      "pro-audio" = {
+        cards.rules = [
+          {
+            match.name = "alsa_card.usb-Fosi_Audio_Fosi_Audio_K1";
+            profile = "pro-audio";
+          }
+        ];
+       };
     };
   };
 
   # Enable Zram swap
   zramSwap.enable = true;
-  zramSwap.memoryPercent = 35;
-  zramSwap.writebackDevice = "/dev/disk/by-uuid/3e5c22c8-adb7-4331-a37d-5e68629852b2";
-
-  # Apparently, zram writeback needs to be triggered externally
-  # https://github.com/systemd/zram-generator/issues/164
-  systemd.timers."zram-writeback" = {
-  wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnBootSec = "5m";
-      OnUnitActiveSec = "5m";
-      Unit = "zram-writeback.service";
-    };
-  };
-
-  systemd.services."zram-writeback" = {
-    script = ''
-      set -eu
-      ${pkgs.coreutils}/bin/echo huge > /sys/block/zram0/writeback
-      ${pkgs.coreutils}/bin/echo 'cat /sys/block/zram0/bd_stat'
-      ${pkgs.coreutils}/bin/cat /sys/block/zram0/bd_stat
-    '';
-    serviceConfig = {
-      Type = "oneshot";
-      User = "root";
-    };
-  };
+  zramSwap.memoryPercent = 25;
  
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.pol = {
     isNormalUser = true;
@@ -187,7 +168,6 @@
       xfce.parole
 
       deluge
-      #qbittorrent
       tremotesf
       popcorntime
       telegram-desktop
@@ -197,6 +177,13 @@
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "pol";
+
+  # Disable sleeping (we are a media center!)
+  powerManagement.enable = false;
+  systemd.targets.sleep.enable = false;
+  systemd.targets.suspend.enable = false;
+  #systemd.targets.hibernate.enable = false;
+  systemd.targets.hybrid-sleep.enable = false;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
