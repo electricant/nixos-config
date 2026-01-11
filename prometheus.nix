@@ -179,10 +179,9 @@ in
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim-full
-    wget
     killall
     alsa-utils
-    glxinfo
+    mesa-demos
     gitMinimal
     nfs-utils
     gparted
@@ -197,7 +196,12 @@ in
     sshfs
     usbutils
     gnupg
-    pinentry
+    pinentry-tty
+    pinentry-curses
+
+    wget
+    traceroute
+    mtr
 
     system-config-printer
 
@@ -251,7 +255,7 @@ in
       onCalendar = "hourly";
       settings = {
         snapshot_preserve_min = "1d";
-        snapshot_preserve = "1d 2w 3m";
+        snapshot_preserve = "7d 4w 6m";
         volume."/home" = {
             snapshot_dir = "/home/snapshots";
             subvolume = ".";

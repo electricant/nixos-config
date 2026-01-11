@@ -102,7 +102,7 @@
 
   # Enable mesa / opengl
   hardware.graphics.enable = true;
-  hardware.graphics.extraPackages = [ pkgs.mesa.drivers ];
+  hardware.graphics.extraPackages = [ pkgs.mesa ];
 
   # Configure X11
   services.xserver = {
@@ -195,7 +195,7 @@
     wget
     killall
     alsa-utils
-    glxinfo
+    mesa-demos
     gitMinimal
     nfs-utils
     gparted
