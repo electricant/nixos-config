@@ -53,6 +53,12 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.modemmanager.enable = true;
+
+  # Workaround: https://github.com/NixOS/nixpkgs/issues/270809
+  systemd.services.ModemManager = {
+    wantedBy = [ "multi-user.target" "network.target" ];
+  };
 
   # Enable network manager applet
   programs.nm-applet.enable = true;
